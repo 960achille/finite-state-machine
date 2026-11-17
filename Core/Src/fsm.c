@@ -2,7 +2,7 @@
 #include "stm32l4xx_hal.h"
 #include <stdio.h>
 
-void setLed(Led_t led, int state) {
+void setLed(Led_t* led, int state) {
     led.state = state;
     if (led.port == NULL) {
         printf("[SIMULAZIONE] Led %s -> %d\n", led.name, led.state)
@@ -16,15 +16,15 @@ void setLed(Led_t led, int state) {
 
 void updateFSM(FSM_t* fsm) {
     // Turn all off and turn on the right one
-    Set_Led(fsm->led_blue, fsm->state == S0);
-    Set_Led(fsm->led_yellow, fsm->state == S1);
-    Set_Led(fsm->led_yellow, fsm->state == S2);
-    Set_Led(fsm->led_green, fsm->state == S3);
-    Set_Led(fsm->led_red, fsm->state == S4);
+    setLed(fsm->led_blue, fsm->state == S0);
+    setLed(fsm->led_yellow, fsm->state == S1);
+    setLed(fsm->led_yellow, fsm->state == S2);
+    setLed(fsm->led_green, fsm->state == S3);
+    setLed(fsm->led_red, fsm->state == S4);
     printf("FSM State = %s", fsm->state);
 }
 
-void FSM_init(FSM_t *fsm, LedPin_t blue_led, LedPin_t yellow_led, LedPin_t green_led, LedPin_t red_led) {
+void FSM_init(FSM_t *fsm, Led_t blue_led, Led_t yellow_led, Led_t green_led, Led_t red_led) {
     fsm->state = S0;
     fsm->blue = blue_led;
     fsm->yellow = yellow_led;

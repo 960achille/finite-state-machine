@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "fsm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,7 +93,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  FSM_t my_fsm;
+  FSM_init(&my_fsm, NULL, NULL, NULL, NULL);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,7 +102,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    Input_t my_input = "A"
+    FSM_change(&my_fsm, my_input);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
