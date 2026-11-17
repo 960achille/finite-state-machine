@@ -30,10 +30,10 @@ typedef struct {
 
 typedef struct {
     state_t state;
-    LedPin_t blue;
-    LedPin_t yellow;
-    LedPin_t green;
-    LedPin_t red; //error led
+    Led_t blue;
+    Led_t yellow;
+    Led_t green;
+    Led_t red; //error led
 } FSM_t;
 
 void FSM_init(FSM_t* fsm, LedPin_t blue_led, LedPin_t yellow_led, LedPin_t green_led, LedPin_t red_led);
