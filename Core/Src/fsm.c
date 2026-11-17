@@ -1,36 +1,20 @@
 #include "fsm.h"
-#include "stm32l4xx_hal.h"
 #include <stdio.h>
 
-void setLed(Led_t* led, int state) {
-    led.state = state;
-    if (led.port == NULL) {
-        printf("[SIMULAZIONE] Led %s -> %d\n", led.name, led.state)
-    } else {
-        if(led.state == 1)
-            HAL_GPIO_WritePin(led.port, led.pin, GPIO_PIN_SET);
-        else
-            HAL_GPIO_WritePin(led.port, led.pin, GPIO_PIN_RESET);
-    }
+static void updateFSM(FSM_t *fsm) {
+    printf("\n\nSTATE: %d\n", fsm->state);
+    Led_set(fsm->blue, fsm->state == S0);
+    Led_set(fsm->yellow, fsm->state == S1 || fsm->state == S2);
+    Led_set(fsm->green, fsm->state == S3);
+    Led_set(fsm->red, fsm->state == S4);
 }
 
-void updateFSM(FSM_t* fsm) {
-    // Turn all off and turn on the right one
-    setLed(fsm->led_blue, fsm->state == S0);
-    setLed(fsm->led_yellow, fsm->state == S1);
-    setLed(fsm->led_yellow, fsm->state == S2);
-    setLed(fsm->led_green, fsm->state == S3);
-    setLed(fsm->led_red, fsm->state == S4);
-    printf("FSM State = %s", fsm->state);
-}
-
-void FSM_init(FSM_t *fsm, Led_t blue_led, Led_t yellow_led, Led_t green_led, Led_t red_led) {
+void FSM_init(FSM_t *fsm, Led_t *blue, Led_t *yellow, Led_t *green, Led_t *red) {
     fsm->state = S0;
-    fsm->blue = blue_led;
-    fsm->yellow = yellow_led;
-    fsm->green = green_led;
-    fsm->red = red_led;
-
+    fsm->blue = blue;
+    fsm->yellow = yellow;
+    fsm->green = green;
+    fsm->red = red;
     updateFSM(fsm);
 }
 
