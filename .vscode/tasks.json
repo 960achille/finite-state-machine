@@ -1,0 +1,108 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Sim: Prepare Build Dir",
+            "type": "process",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-Command",
+                "New-Item -ItemType Directory -Force -Path '${workspaceFolder}/build/sim' | Out-Null"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "type": "cppbuild",
+            "label": "Sim: Build PC (gcc)",
+            "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-g",
+                "-DPLATFORM_SIM",
+                "-I${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/sim/main.c",
+                "${workspaceFolder}/sim/led_sim.c",
+                "${workspaceFolder}/Core/Src/fsm.c",
+                "-o",
+                "${workspaceFolder}/build/sim/fsm_sim.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "PATH": "C:\\msys64\\ucrt64\\bin;${env:PATH}"
+                }
+            },
+            "dependsOn": [
+                "Sim: Prepare Build Dir"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Compila il simulatore PC (sim/main.c + led_sim.c + Core/Src/fsm.c) con MSYS2 UCRT64 gcc"
+        },
+        {
+            "label": "Sim: Run PC",
+            "type": "process",
+            "command": "${workspaceFolder}/build/sim/fsm_sim.exe",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "PATH": "C:\\msys64\\ucrt64\\bin;${env:PATH}"
+                }
+            },
+            "dependsOn": [
+                "Sim: Build PC (gcc)"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Configure (Debug)",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "Debug"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Build (Debug)",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "Debug"
+            ],
+            "dependsOn": [
+                "CMake: Configure (Debug)"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "STM32: Flash B-L475E-IOT01A (OpenOCD)",
+            "type": "process",
+            "command": "openocd",
+            "args": [
+                "-f",
+                "board/st_b-l475e-iot01a.cfg",
+                "-c",
+                "program build/Debug/finite_state_machine.elf verify reset exit"
+            ],
+            "dependsOn": [
+                "CMake: Build (Debug)"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
